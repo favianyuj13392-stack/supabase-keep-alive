@@ -1,0 +1,27 @@
+name: Despertador de Supabase
+
+on:
+  schedule:
+    # Se ejecuta todos los lunes y jueves a las 00:00 UTC (Evita la pausa de 7 días)
+    - cron: '0 0 * * 1,4'
+  workflow_dispatch: # Permite ejecutar el botón manualmente en cualquier momento
+
+jobs:
+  ping-databases:
+    runs-on: ubuntu-latest
+    steps:
+      # --- PROYECTO CONSTRURED ---
+      - name: Ping Construred
+        run: |
+          curl -X POST "${{ secrets.PROYECTO_CONSTRURED_URL }}/rest/v1/rpc/keep_alive_ping" \
+          -H "apikey: ${{ secrets.PROYECTO_CONSTRURED_KEY }}" \
+          -H "Authorization: Bearer ${{ secrets.PROYECTO_CONSTRURED_KEY }}" \
+          -H "Content-Type: application/json"
+
+      # --- PROYECTO GYMSYSTEM ---
+      - name: Ping Gymsystem
+        run: |
+          curl -X POST "${{ secrets.PROYECTO_GYMSYSTEM_URL }}/rest/v1/rpc/keep_alive_ping" \
+          -H "apikey: ${{ secrets.PROYECTO_GYMSYSTEM_KEY }}" \
+          -H "Authorization: Bearer ${{ secrets.PROYECTO_GYMSYSTEM_KEY }}" \
+          -H "Content-Type: application/json"
