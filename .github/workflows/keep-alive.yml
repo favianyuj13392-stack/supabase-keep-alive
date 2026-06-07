@@ -2,9 +2,9 @@ name: Despertador de Supabase
 
 on:
   schedule:
-    # Se ejecuta todos los lunes y jueves a las 00:00 UTC (Evita la pausa de 7 días)
-    - cron: '0 0 * * 1,4'
-  workflow_dispatch: # Permite ejecutar el botón manualmente en cualquier momento
+    # Se ejecuta todos los días a las 01:00 UTC (después del cron job)
+    - cron: '0 1 * * *'
+  workflow_dispatch: # Permite ejecutar manualmente
 
 jobs:
   ping-databases:
@@ -16,7 +16,9 @@ jobs:
           curl -X POST "${{ secrets.PROYECTO_CONSTRURED_URL }}/rest/v1/rpc/keep_alive_ping" \
           -H "apikey: ${{ secrets.PROYECTO_CONSTRURED_KEY }}" \
           -H "Authorization: Bearer ${{ secrets.PROYECTO_CONSTRURED_KEY }}" \
-          -H "Content-Type: application/json"
+          -H "Content-Type: application/json" \
+          -d '{}' \
+          -w "\nStatus: %{http_code}\n"
 
       # --- PROYECTO GYMSYSTEM ---
       - name: Ping Gymsystem
@@ -24,4 +26,12 @@ jobs:
           curl -X POST "${{ secrets.PROYECTO_GYMSYSTEM_URL }}/rest/v1/rpc/keep_alive_ping" \
           -H "apikey: ${{ secrets.PROYECTO_GYMSYSTEM_KEY }}" \
           -H "Authorization: Bearer ${{ secrets.PROYECTO_GYMSYSTEM_KEY }}" \
-          -H "Content-Type: application/json"
+          -H "Content-Type: application/json" \
+          -d '{}' \
+          -w "\nStatus: %{http_code}\n"
+
+      # Log de ejecución
+      - name: Log execution
+        run: |
+          echo "✅ Keep-alive workflow executed at $(date -u +'%Y-%m-%d %H:%M:%S UTC')"
+          echo "🔔 Next scheduled execution: Tomorrow at 01:00 UTC"
