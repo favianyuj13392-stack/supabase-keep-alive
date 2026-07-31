@@ -29,7 +29,20 @@ jobs:
           -H "Content-Type: application/json" \
           -d '{}' \
           -w "\nStatus: %{http_code}\n"
-
+      # --- PROYECTO DARKOSYNC---
+      - name: Ping etdfuvm (sin clave)
+        run: |
+          URL="https://etdfuvmburjfqkkvdrnq.supabase.co"
+          echo "Pinging $URL (probando /auth/v1, /rest/v1 y raíz)..."
+          for endpoint in "$URL/auth/v1" "$URL/rest/v1" "$URL"; do
+            echo "Probando $endpoint"
+            if curl -s -m 10 -I "$endpoint" | grep -q "HTTP/"; then
+              echo "OK $endpoint"
+              break
+            else
+              echo "Fallo $endpoint"
+            fi
+          done
       # Log de ejecución
       - name: Log execution
         run: |
