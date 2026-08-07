@@ -29,20 +29,25 @@ jobs:
           -H "Content-Type: application/json" \
           -d '{}' \
           -w "\nStatus: %{http_code}\n"
-      # --- PROYECTO DARKOSYNC---
-      - name: Ping etdfuvm (sin clave)
+      # --- PROYECTO DARKOSYNC ---
+      - name: Ping Darkosync
         run: |
-          URL="https://etdfuvmburjfqkkvdrnq.supabase.co"
-          echo "Pinging $URL (probando /auth/v1, /rest/v1 y raíz)..."
-          for endpoint in "$URL/auth/v1" "$URL/rest/v1" "$URL"; do
-            echo "Probando $endpoint"
-            if curl -s -m 10 -I "$endpoint" | grep -q "HTTP/"; then
-              echo "OK $endpoint"
-              break
-            else
-              echo "Fallo $endpoint"
-            fi
-          done
+          curl -X POST "${{ secrets.PROYECTO_DARKOSYNC_URL }}/rest/v1/rpc/keep_alive_ping" \
+          -H "apikey: ${{ secrets.PROYECTO_DARKOSYNC_KEY }}" \
+          -H "Authorization: Bearer ${{ secrets.PROYECTO_DARKOSYNC_KEY }}" \
+          -H "Content-Type: application/json" \
+          -d '{}' \
+          -w "\nStatus: %{http_code}\n"
+
+      # --- PROYECTO VETERINARIAS ---
+      - name: Ping Veterinarias
+        run: |
+          curl -X POST "${{ secrets.PROYECTO_VETERINARIAS_URL }}/rest/v1/rpc/keep_alive_ping" \
+          -H "apikey: ${{ secrets.PROYECTO_VETERINARIAS_KEY }}" \
+          -H "Authorization: Bearer ${{ secrets.PROYECTO_VETERINARIAS_KEY }}" \
+          -H "Content-Type: application/json" \
+          -d '{}' \
+          -w "\nStatus: %{http_code}\n"
       # Log de ejecución
       - name: Log execution
         run: |
